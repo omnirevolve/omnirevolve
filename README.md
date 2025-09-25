@@ -1,20 +1,71 @@
 # OmniRevolve Plotter
 
-XY-plotter (4 цвета) · STM32F446 + ESP32 (microROS) · ROS 2 UI · SPI DMA 512B · TIM4@10kHz
+**XY plotter with 4-color carousel** · **STM32F446 (TIM4 @ 10 kHz)** · **ESP32 (FreeRTOS + micro-ROS over Wi-Fi)** · **ROS 2 UI** · **SPI DMA 512 B streaming** · **CRC-based control protocol**
 
-## Quick Start
-- Docker image: `ghcr.io/omnirevolve/omnirevolve-dev:humble` (скоро)
-- UI: `ros2 run omnirevolve_ros2_ui ui.py` (или `python3 ui.py`)
+This repository is the **umbrella/portal**: architecture, links to public mirrors, and a minimal quick start.
 
-## Repos
-- image-processor · stm32-firmware · esp32-core · esp32-microros · ros2-ui · ros2-messages · protocol
+---
 
-## Architecture (draft)
+## Public repositories
+
+- [omnirevolve-image-processor](https://github.com/omnirevolve/omnirevolve-image-processor) — image → contours → plotter byte stream.
+- [omnirevolve-stm32-firmware](https://github.com/omnirevolve/omnirevolve-stm32-firmware) — STM32F446 firmware (TIM4@10kHz, SPI DMA RX, UART CRC, SSD1309).
+- [omnirevolve-esp32-core](https://github.com/omnirevolve/omnirevolve-esp32-core) — OLED status, keypad, UART (CRC) to STM32; shared components.
+- [omnirevolve-esp32-microros](https://github.com/omnirevolve/omnirevolve-esp32-microros) — ESP32 micro-ROS bridge: ROS 2 stream → SPI DMA → STM32; telemetry.
+- [omnirevolve-ros2-ui](https://github.com/omnirevolve/omnirevolve-ros2-ui) — PC UI (Tkinter): send stream, control, live preview, progress.
+- [omnirevolve-ros2-messages](https://github.com/omnirevolve/omnirevolve-ros2-messages) — shared ROS 2 messages (e.g., `PlotterTelemetry`).
+- [omnirevolve-protocol](https://github.com/omnirevolve/omnirevolve-protocol) — binary protocol & defines (service/step bytes, EOF = 0x3F).
+
+---
+
+## System architecture
+
 ```mermaid
 flowchart LR
-UI -- byte_stream/cmds --> ESP32
-ESP32 -- SPI DMA 512B --> STM32
-STM32 -- UART status --> ESP32
-ESP32 -- telemetry --> UI
-STM32 --> TB6600 --> NEMA17
+  subgraph PC
+    UI["ROS 2 UI"]
+    Agent["micro-ROS Agent (UDP)"]
+  end
 
+  subgraph ESP32
+    MROS["micro-ROS Node / FreeRTOS"]
+  end
+
+  subgraph STM32
+    MCU["STM32F446 (NUCLEO-F446RE)"]
+    TIM4["TIM4 @ 10 kHz (step generation)"]
+  end
+
+  UI -- "/plotter/byte_stream + commands" --> MROS
+  MROS -- "SPI DMA: 512 B chunks" --> MCU
+  MCU -- "UART status (CRC)" --> MROS
+  MROS -- "/plotter/telemetry" --> UI
+
+  MCU --> TIM4
+  MCU --> TB6600["TB6600 drivers"] --> NEMA["NEMA17 steppers (X/Y/pen conveyor/carousel)"]
+```
+
+---
+
+## Quick start (PC side)
+
+```bash
+# Start micro-ROS Agent (UDP)
+ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+
+# Launch UI (from omnirevolve-ros2-ui)
+python3 ui.py
+# or: ros2 run omnirevolve_ros2_ui ui
+```
+
+For ESP32/STM32 firmware builds, see the respective repositories linked above.
+
+---
+
+## Media
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
