@@ -1,8 +1,8 @@
 # OmniRevolve Plotter
 
-**XY plotter with 4‑color carousel** · **STM32F446 (TIM4 @ 10 kHz)** · **ESP32 (FreeRTOS + micro‑ROS over Wi‑Fi)** · **ROS 2 UI** · **SPI DMA 512 B streaming** · **CRC‑based control protocol**
+**XY plotter with 4‑color carousel (mechanically scalable to ~15 colors)** · **STM32F446 (TIM4 @ 10 kHz)** · **ESP32 (FreeRTOS + micro‑ROS over Wi‑Fi)** · **ROS 2 UI** · **SPI DMA 512 B streaming** · **CRC‑based control protocol**
 
-This repository is the **umbrella/portal** for recruiters and technical reviewers: architecture, links to public mirrors, and a minimal quick start.
+This repository is the **umbrella/portal** for recruiters and technical reviewers: architecture, public mirrors, dev container, and a minimal quick start.
 
 ---
 
@@ -11,10 +11,10 @@ This repository is the **umbrella/portal** for recruiters and technical reviewer
 - [omnirevolve-image-processor](https://github.com/omnirevolve/omnirevolve-image-processor) — image → contours → plotter byte stream.
 - [omnirevolve-stm32-firmware](https://github.com/omnirevolve/omnirevolve-stm32-firmware) — STM32F446 firmware (TIM4@10kHz, SPI DMA RX, UART CRC, SSD1309).
 - [omnirevolve-esp32-core](https://github.com/omnirevolve/omnirevolve-esp32-core) — OLED status, keypad, UART (CRC) to STM32; shared components.
-- [omnirevolve-esp32-microros](https://github.com/omnirevolve/omnirevolve-esp32-microros) — ESP32 micro‑ROS bridge: ROS 2 stream → SPI DMA → STM32; telemetry.
+- [omnirevolve-esp32-microros](https://github.com/omnirevolve/omnirevolve-esp32-microros) — ESP32 micro‑ROS bridge: ROS 2 stream → SPI DMA → STM32; telemetry.
 - [omnirevolve-ros2-ui](https://github.com/omnirevolve/omnirevolve-ros2-ui) — PC UI (Tkinter): send stream, control, live preview, progress.
-- [omnirevolve-ros2-messages](https://github.com/omnirevolve/omnirevolve-ros2-messages) — shared ROS 2 messages (e.g., `PlotterTelemetry`).
-- [omnirevolve-protocol](https://github.com/omnirevolve/omnirevolve-protocol) — binary protocol & defines (service/step bytes, EOF = 0x3F).
+- [omnirevolve-ros2-messages](https://github.com/omnirevolve/omnirevolve-ros2-messages) — shared ROS 2 messages (e.g., `PlotterTelemetry`).
+- [omnirevolve-protocol](https://github.com/omnirevolve/omnirevolve-protocol) — binary protocol & defines (service/step bytes, EOF = 0x3F).
 
 ---
 
@@ -50,10 +50,10 @@ flowchart LR
 ## Quick start (PC side)
 
 ```bash
-# Start micro-ROS Agent (UDP)
+# micro-ROS Agent (UDP)
 ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 
-# Launch UI (from omnirevolve-ros2-ui)
+# UI (from omnirevolve-ros2-ui)
 python3 ui.py
 # or: ros2 run omnirevolve_ros2_ui ui
 ```
@@ -69,32 +69,46 @@ docker pull ghcr.io/omnirevolve/omnirevolve-dev:humble
 docker run -it --name omni_dev --network host   --device /dev/ttyUSB0 --device /dev/ttyACM0   -v $HOME/omnirevolve_ws:/work   ghcr.io/omnirevolve/omnirevolve-dev:humble
 ```
 
-Or use Compose (recommended). See **[docs/CONTAINERS.md](docs/CONTAINERS.md)**.
+Prefer **Compose** and see detailed instructions in **[docs/CONTAINERS.md](docs/CONTAINERS.md)**.
+
+---
+
+## Firmware usage (ESP32 micro‑ROS)
+
+A condensed view; the **full workflow with commands** lives in **docs/CONTAINERS.md**.
+
+1. Start the container and open a shell: `docker compose up -d && docker exec -it omni_dev bash`  
+2. Configure Agent IP/port:  
+   ```bash
+   cd ~/ros2_ws/firmware/freertos_apps/apps/omnirevolve_esp32_microros
+   ./firmware.sh --agent-ip <HOST_IP> --agent-port 8888 configure
+   ```
+3. First‑time Wi‑Fi setup via `menuconfig`.  
+4. Build / Flash / Monitor:  
+   ```bash
+   ./firmware.sh build
+   ./firmware.sh flash
+   ./firmware.sh monitor
+   ```
+
+> The image ships with ROS 2 Humble, micro‑ROS Agent, helpers (`rosenv`, `idfenv`), and cloned sources to speed up onboarding. See **docs/CONTAINERS.md** for all details.
 
 ---
 
 ## Media
 
-- `docs/media/plotter.jpg` — plotter hardware photo  
-- YouTube — timelapse demo #1 (printing)  
-- YouTube — pen carousel change  
-- YouTube — full process (PC + hardware + plotting)  
-- `docs/media/result.jpg` — sample output #1  
-- `docs/media/result-2.jpg` — sample output #2
+Photos and YouTube previews (clickable thumbnails). Replace `VIDEO_ID_X` with your IDs.
 
 ### Photos
-
 <p align="center">
   <img src="docs/media/plotter.jpg"  alt="Plotter hardware" width="60%">
 </p>
-
 <p align="center">
   <img src="docs/media/result.jpg"   alt="Sample output #1" width="49%">
   <img src="docs/media/result-2.jpg" alt="Sample output #2" width="49%">
 </p>
 
 ### Videos
-
 <p align="center">
   <a href="https://www.youtube.com/watch?v=epHM4n3US48">
     <img src="https://img.youtube.com/vi/epHM4n3US48/hqdefault.jpg" alt="Timelapse demo #1 (printing)" width="32%">
@@ -106,6 +120,14 @@ Or use Compose (recommended). See **[docs/CONTAINERS.md](docs/CONTAINERS.md)**.
     <img src="https://img.youtube.com/vi/BMJWWeqkJn0/hqdefault.jpg" alt="Full process: PC + hardware + plotting" width="32%">
   </a>
 </p>
+
+---
+
+## Models (CAD) — *Coming soon*
+A short bill of parts and printable STL files for the carousel, head, and axes will be published here together with assembly notes.
+
+## BOM — *Coming soon*
+A minimal BOM (motors, drivers, sensors, belts, pulleys, bearings, PSU) with links and quantities will be published soon.
 
 ---
 
