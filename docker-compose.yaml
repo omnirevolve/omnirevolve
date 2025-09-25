@@ -1,0 +1,13 @@
+services:
+  dev:
+    image: ghcr.io/omnirevolve/omnirevolve-dev:humble
+    container_name: omni_dev
+    network_mode: host
+    volumes:
+      - ${HOME}/omnirevolve_ws:/work:rw
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyACM0:/dev/ttyACM0
+    tty: true
+    stdin_open: true
+    restart: unless-stopped

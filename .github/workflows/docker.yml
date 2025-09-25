@@ -1,10 +1,17 @@
-```yaml
-name: Build & Push Docker
-on: [push, workflow_dispatch]
+name: Build & Push Docker (GHCR)
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker.yml'
+  workflow_dispatch:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    permissions: { contents: read, packages: write }
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
@@ -17,4 +24,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/omnirevolve/omnirevolve-dev:humble
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/omnirevolve-dev:humble
+            ghcr.io/${{ github.repository_owner }}/omnirevolve-dev:latest
