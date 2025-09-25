@@ -1,6 +1,6 @@
 # OmniRevolve Plotter
 
-**XY plotter with 4-color carousel** · **STM32F446 (TIM4 @ 10 kHz)** · **ESP32 (FreeRTOS + micro-ROS over Wi‑Fi)** · **ROS 2 UI** · **SPI DMA 512 B streaming** · **CRC-based control protocol**
+**XY plotter with 4‑color carousel** · **STM32F446 (TIM4 @ 10 kHz)** · **ESP32 (FreeRTOS + micro‑ROS over Wi‑Fi)** · **ROS 2 UI** · **SPI DMA 512 B streaming** · **CRC‑based control protocol**
 
 This repository is the **umbrella/portal** for recruiters and technical reviewers: architecture, links to public mirrors, and a minimal quick start.
 
@@ -11,10 +11,10 @@ This repository is the **umbrella/portal** for recruiters and technical reviewer
 - [omnirevolve-image-processor](https://github.com/omnirevolve/omnirevolve-image-processor) — image → contours → plotter byte stream.
 - [omnirevolve-stm32-firmware](https://github.com/omnirevolve/omnirevolve-stm32-firmware) — STM32F446 firmware (TIM4@10kHz, SPI DMA RX, UART CRC, SSD1309).
 - [omnirevolve-esp32-core](https://github.com/omnirevolve/omnirevolve-esp32-core) — OLED status, keypad, UART (CRC) to STM32; shared components.
-- [omnirevolve-esp32-microros](https://github.com/omnirevolve/omnirevolve-esp32-microros) — ESP32 micro‑ROS bridge: ROS 2 stream → SPI DMA → STM32; telemetry.
+- [omnirevolve-esp32-microros](https://github.com/omnirevolve/omnirevolve-esp32-microros) — ESP32 micro‑ROS bridge: ROS 2 stream → SPI DMA → STM32; telemetry.
 - [omnirevolve-ros2-ui](https://github.com/omnirevolve/omnirevolve-ros2-ui) — PC UI (Tkinter): send stream, control, live preview, progress.
-- [omnirevolve-ros2-messages](https://github.com/omnirevolve/omnirevolve-ros2-messages) — shared ROS 2 messages (e.g., `PlotterTelemetry`).
-- [omnirevolve-protocol](https://github.com/omnirevolve/omnirevolve-protocol) — binary protocol & defines (service/step bytes, EOF = 0x3F).
+- [omnirevolve-ros2-messages](https://github.com/omnirevolve/omnirevolve-ros2-messages) — shared ROS 2 messages (e.g., `PlotterTelemetry`).
+- [omnirevolve-protocol](https://github.com/omnirevolve/omnirevolve-protocol) — binary protocol & defines (service/step bytes, EOF = 0x3F).
 
 ---
 
@@ -75,20 +75,37 @@ Or use Compose (recommended). See **[docs/CONTAINERS.md](docs/CONTAINERS.md)**.
 
 ## Media
 
-Place the following (optional) files and they will be shown in this README:
+- `docs/media/plotter.jpg` — plotter hardware photo  
+- YouTube — timelapse demo #1 (printing)  
+- YouTube — pen carousel change  
+- YouTube — full process (PC + hardware + plotting)  
+- `docs/media/result.jpg` — sample output #1  
+- `docs/media/result-2.jpg` — sample output #2
 
-- `docs/media/main-demo.gif` (main demo)
-- `docs/media/plotter.jpg` (hardware photo)
-- `docs/media/result.jpg` (sample output)
-
-```md
-![Demo](docs/media/main-demo.gif)
+### Photos
 
 <p align="center">
-  <img src="docs/media/plotter.jpg" alt="Plotter hardware" width="49%">
-  <img src="docs/media/result.jpg"  alt="Sample output"   width="49%">
+  <img src="docs/media/plotter.jpg"  alt="Plotter hardware" width="60%">
 </p>
-```
+
+<p align="center">
+  <img src="docs/media/result.jpg"   alt="Sample output #1" width="49%">
+  <img src="docs/media/result-2.jpg" alt="Sample output #2" width="49%">
+</p>
+
+### Videos
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=epHM4n3US48">
+    <img src="https://img.youtube.com/vi/epHM4n3US48/hqdefault.jpg" alt="Timelapse demo #1 (printing)" width="32%">
+  </a>
+  <a href="https://www.youtube.com/watch?v=NMgnAYHxDm4">
+    <img src="https://img.youtube.com/vi/NMgnAYHxDm4/hqdefault.jpg" alt="Pen carousel change" width="32%">
+  </a>
+  <a href="https://www.youtube.com/watch?v=BMJWWeqkJn0">
+    <img src="https://img.youtube.com/vi/BMJWWeqkJn0/hqdefault.jpg" alt="Full process: PC + hardware + plotting" width="32%">
+  </a>
+</p>
 
 ---
 
