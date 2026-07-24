@@ -1,0 +1,3 @@
+
+# Local-only compose tweaks (e.g. running without a board attached)
+docker-compose.override.yaml
